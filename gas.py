@@ -56,32 +56,53 @@ x = 0
 
 font = ImageFont.load_default()
 
-datos = []
+datos = {}
 
 def datagas():
-    my_url = 'https://micm.gob.do/precios-de-combustibles' #the victim
-    uclient = uReq(my_url) #when u kidnap the victim
+    url = 'https://micm.gob.do/direcciones/combustibles' #the victim
+    uclient = uReq(url) #when u kidnap the victim
     page_html = uclient.read() #when u rape the victim
     uclient.close() #when u kill the victim
     soup =  Soup(page_html, "html.parser")
 
-    titulo = soup.find_all('title')[0].get_text()
-    tema = soup.find_all('h2')[0].get_text()
+    data = []
 
-    for i in range(0,12):
-        # print(soup.find_all('td')[i].get_text())
-        datos.append(soup.find_all('td')[i].get_text())
+    def datas():
+        for i in range(1):
+            data.append(soup.find_all('tbody')[i].get_text())
+    
+    datas()
+    
+    gas_prm = data[0][0:16]
+    gas_prm_pr = data[0][16:26]
+    gas_reg = data[0][26:42]
+    gas_reg_pr = data[0][42:52]
+    gsl_opt = data[0][52:65]
+    gsl_opt_pr = data[0][65:75]
+    gsl_reg = data[0][75:89] 
+    gsl_reg_pr = data[0][89:99]
+    krs = data[0][99:107]
+    krs_pr = data[0][107:117] 
+    glp = data[0][142:145]
+    glp_pr = data[0][146:156]
+    gnv = data[0][156:183]
+    gnv_pr = data[0][183:193]
+
+    strings = ['gasolina_premium','gasolina_regular','gasoil_optimo','gasoil_regular','kerosene','glp','gnv']
+    price = [gas_prm_pr,gas_reg_pr,gsl_opt_pr,gsl_reg_pr,krs_pr,glp_pr,gnv_pr]
+    for i in range(len(strings)):
+        datos.setdefault(strings[i],price[i])
 
 if __name__ == '__main__':
 
     datagas()
     draw.text((x, top), "Precios Combustibles", font=font, fill=255)
-    draw.text((x, top+16), "Gas. Prm.: " + str(datos[1]), font=font , fill=255)
-    draw.text((x, top+25), "Gas. Reg.: " + str(datos[3]), font= font , fill=255)
-    draw.text((x, top+32), "Die. Opt.: " + str(datos[5]) , font=font , fill=255)
-    draw.text((x, top+40), "Die. Reg.: " + str(datos[7]) , font=font , fill=255)
-    draw.text((x, top+48), "Kerosene:  " + str(datos[9]) , font=font , fill=255)
-    draw.text((x, top+56), "GLP:       " + str(datos[11]) , font=font , fill=255)
+    draw.text((x, top+16), "Gas. Prm.: " + str(datos['gasolina_premium']), font=font , fill=255)
+    draw.text((x, top+25), "Gas. Reg.: " + str(datos['gasolina_regular']), font= font , fill=255)
+    draw.text((x, top+32), "Die. Opt.: " + str(datos['gasoil_optimo']) , font=font , fill=255)
+    draw.text((x, top+40), "Die. Reg.: " + str(datos['gasoil_regular']) , font=font , fill=255)
+    draw.text((x, top+48), "Kerosene:  " + str(datos['kerosene']) , font=font , fill=255)
+    draw.text((x, top+56), "GLP:       " + str(datos['glp']) , font=font , fill=255)
 
     disp.image(image)
     disp.display()
